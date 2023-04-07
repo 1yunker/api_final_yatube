@@ -13,6 +13,7 @@ class Group(models.Model):
     slug = models.SlugField(
         verbose_name='Адрес',
         help_text='URL-адрес сообщества',
+        max_length=50,
         unique=True
     )
     description = models.TextField(
@@ -36,6 +37,9 @@ class Post(models.Model):
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts')
+    group = models.ForeignKey(
+        Group, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='posts')
     image = models.ImageField(
         upload_to='posts/', null=True, blank=True)
 

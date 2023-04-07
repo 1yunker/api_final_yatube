@@ -1,12 +1,14 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import permissions
 from rest_framework import viewsets
 
-from posts.models import Group, Post
+from posts.models import Group, Post, Follow
 from .permissions import IsOwner
 from .serializers import (
     GroupSerializer,
     PostSerializer,
     CommentSerializer,
+    FollowSerializer
 )
 
 
@@ -36,3 +38,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         post_obj = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         serializer.save(author=self.request.user,
                         post=post_obj)
+
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
